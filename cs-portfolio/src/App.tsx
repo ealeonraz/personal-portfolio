@@ -1,5 +1,5 @@
-import React from "react";
-import { motion } from "framer-motion";
+import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Github,
   Linkedin,
@@ -167,8 +167,10 @@ function ProjectCard({ p }: { p: (typeof PROJECTS)[number] }) {
 
 // ---------- MAIN ----------
 export default function Portfolio() {
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
-    <div className="dark bg-neutral-950 text-neutral-50 min-h-screen transition-colors">
+    <div className="bg-neutral-950 text-neutral-50 min-h-screen transition-colors">
       {/* HEADER */}
       <header className="sticky top-0 z-50 backdrop-blur bg-neutral-950/70 border-b border-neutral-800/50">
         <div className="mx-auto w-full max-w-screen-2xl px-4 py-3 flex items-center justify-between">
@@ -178,6 +180,8 @@ export default function Portfolio() {
           >
             {YOUR_NAME}
           </a>
+
+          {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6 text-sm text-neutral-300">
             {["Projects", "Experience", "Skills", "Contact"].map((item) => (
               <a
@@ -189,10 +193,67 @@ export default function Portfolio() {
               </a>
             ))}
           </nav>
+
+          {/* Mobile Menu Button */}
+          <div className="md:hidden">
+            <button
+              onClick={() => setMenuOpen(!menuOpen)}
+              className="text-neutral-300 hover:text-cyan-400 transition"
+              aria-label="Toggle navigation"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="w-6 h-6"
+              >
+                {menuOpen ? (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                ) : (
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                  />
+                )}
+              </svg>
+            </button>
+          </div>
         </div>
+
+        {/* Animated Mobile Menu */}
+        <AnimatePresence>
+          {menuOpen && (
+            <motion.div
+              key="menu"
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+              className="flex flex-col items-center gap-4 py-4 bg-neutral-950 border-t border-neutral-800 md:hidden"
+            >
+              {["Projects", "Experience", "Skills", "Contact"].map((item) => (
+                <a
+                  key={item}
+                  href={`#${item.toLowerCase()}`}
+                  onClick={() => setMenuOpen(false)}
+                  className="text-neutral-300 hover:text-cyan-400 transition text-sm"
+                >
+                  {item}
+                </a>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </header>
 
-      {/* MAIN */}
+      {/* MAIN CONTENT (same as before) */}
       <main id="top" className="mx-auto w-full max-w-screen-2xl px-4">
         {/* HERO */}
         <section className="py-20 text-center">
@@ -310,17 +371,26 @@ export default function Portfolio() {
               </Button>
             </a>
             <a href={RESUME_URL} target="_blank" rel="noreferrer noopener">
-              <Button className="rounded-2xl border border-cyan-500 text-cyan-300 hover:bg-cyan-500/10 transition">
+              <Button
+                variant="secondary"
+                className="rounded-2xl border border-neutral-700"
+              >
                 <FileText className="h-4 w-4 mr-2 text-cyan-400" /> Resume
               </Button>
             </a>
             <a href={GITHUB} target="_blank" rel="noreferrer noopener">
-              <Button className="rounded-2xl border border-cyan-500 text-cyan-300 hover:bg-cyan-500/10 transition">
+              <Button
+                variant="secondary"
+                className="rounded-2xl border border-neutral-700"
+              >
                 <Github className="h-4 w-4 mr-2 text-cyan-400" /> GitHub
               </Button>
             </a>
             <a href={LINKEDIN} target="_blank" rel="noreferrer noopener">
-              <Button className="rounded-2xl border border-cyan-500 text-cyan-300 hover:bg-cyan-500/10 transition">
+              <Button
+                variant="secondary"
+                className="rounded-2xl border border-neutral-700"
+              >
                 <Linkedin className="h-4 w-4 mr-2 text-cyan-400" /> LinkedIn
               </Button>
             </a>
