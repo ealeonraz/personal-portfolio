@@ -367,35 +367,36 @@ export default function Portfolio() {
           <div className="mt-6 flex justify-center flex-wrap gap-4">
             <a href={`mailto:${EMAIL}`}>
               <Button className="rounded-2xl bg-gradient-to-r from-cyan-500 to-blue-500 text-white hover:shadow-cyan-500/20 transition">
-                <Mail className="h-4 w-4 mr-2" /> Email
+                <Mail className="h-4 w-4 mr-0" /> Email
               </Button>
             </a>
             <a href={RESUME_URL} target="_blank" rel="noreferrer noopener">
               <Button
                 variant="secondary"
-                className="rounded-2xl border border-neutral-700"
+                className="rounded-2xl bg-neutral-800 border border-neutral-700 text-white hover:bg-neutral-700 transition"
               >
-                <FileText className="h-4 w-4 mr-2 text-cyan-400" /> Resume
+                <FileText className="h-4 w-4 mr-0 text-cyan-400" /> Resume
               </Button>
             </a>
             <a href={GITHUB} target="_blank" rel="noreferrer noopener">
               <Button
                 variant="secondary"
-                className="rounded-2xl border border-neutral-700"
+                className="rounded-2xl bg-neutral-800 border border-neutral-700 text-white hover:bg-neutral-700 transition"
               >
-                <Github className="h-4 w-4 mr-2 text-cyan-400" /> GitHub
+                <Github className="h-4 w-4 mr-0 text-cyan-400" /> GitHub
               </Button>
             </a>
             <a href={LINKEDIN} target="_blank" rel="noreferrer noopener">
               <Button
                 variant="secondary"
-                className="rounded-2xl border border-neutral-700"
+                className="rounded-2xl bg-neutral-800 border border-neutral-700 text-white hover:bg-neutral-700 transition"
               >
-                <Linkedin className="h-4 w-4 mr-2 text-cyan-400" /> LinkedIn
+                <Linkedin className="h-4 w-4 mr-0 text-cyan-400" /> LinkedIn
               </Button>
             </a>
           </div>
         </section>
+
 
         <footer className="py-10 text-center text-xs text-neutral-500">
           <div className="inline-flex items-center gap-2">
