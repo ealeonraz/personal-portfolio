@@ -20,8 +20,6 @@ It’s built from scratch to emphasize clean structure, performance, and thought
 - **Framer Motion** – Smooth animations and transitions  
 - **Lucide Icons** – Lightweight vector icons  
 - **shadcn/ui** – Elegant, minimal UI components  
-- **Vercel** – Fast, serverless deployment
-
 ---
 
 ## ✨ Features
