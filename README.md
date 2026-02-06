@@ -2,7 +2,7 @@
 
 A modern developer portfolio built with **React**, **Tailwind CSS**, and **Framer Motion**, showcasing my projects, experience, and technical skills.
 
-🌐 **Live Website:** [learnlinearalgebra.com](https://learnlinearalgebra.com)
+🌐 **Live Website:** [ezequielalcaraz.com](https://ezequielalcaraz.com)
 
 ---
 
