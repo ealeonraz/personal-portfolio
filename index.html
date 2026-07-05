@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ezequiel Alcaraz — Full-Stack Developer</title>
+<meta name="description" content="Ezequiel 'Zeke' Alcaraz — full-stack developer. Java/Spring Boot, C#/.NET, React, TypeScript, SQL. Sacramento, CA.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23111'/><text x='50' y='72' font-size='62' font-family='Arial Black' fill='%23fff' text-anchor='middle'>Z</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #f4f2ed;
+    --ink:   #111111;
+    --blue:  #1a1aff;
+    --rule:  #111111;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+    font-variation-settings: 'wdth' 100, 'wght' 400;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: var(--blue); color: #fff; }
+  .mono {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+  }
+  a { color: inherit; text-decoration: none; }
+
+  /* ================= HEADER ================= */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 50;
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    background: var(--paper);
+    border-bottom: 2px solid var(--rule);
+  }
+  header .dot { color: var(--blue); }
+  header nav { display: flex; gap: 22px; }
+  header nav a:hover { color: var(--blue); }
+  @media (max-width: 640px) {
+    header { flex-wrap: wrap; }
+    header .clock { display: none; }
+  }
+
+  /* ================= HERO ================= */
+  #hero {
+    padding: 130px 24px 40px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .giant {
+    font-variation-settings: 'wdth' 120, 'wght' 900;
+    text-transform: uppercase;
+    line-height: .88;
+    letter-spacing: -.015em;
+    font-size: clamp(52px, 14.5vw, 210px);
+    word-break: break-word;
+  }
+  .giant .outline {
+    color: transparent;
+    -webkit-text-stroke: 2.5px var(--ink);
+  }
+  .hero-meta {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px 30px;
+    margin-top: 34px;
+  }
+  .hero-meta .stat b { display: block; font-variation-settings: 'wdth' 110, 'wght' 800; font-size: 15px; text-transform: uppercase; letter-spacing: 0; margin-top: 3px; font-family: 'Archivo'; }
+  .avail { color: var(--blue); }
+
+  /* ================= TICKER ================= */
+  .ticker {
+    overflow: hidden;
+    border-bottom: 2px solid var(--rule);
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 0;
+    white-space: nowrap;
+  }
+  .ticker-track {
+    display: inline-flex;
+    animation: slide 26s linear infinite;
+  }
+  .ticker span {
+    font-variation-settings: 'wdth' 115, 'wght' 700;
+    text-transform: uppercase;
+    font-size: 15px;
+    letter-spacing: .06em;
+    padding-right: 14px;
+  }
+  .ticker .sep { color: var(--blue); -webkit-text-stroke: 0; }
+  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ================= SECTION LABELS ================= */
+  .sec-label {
+    display: flex;
+    justify-content: space-between;
+    padding: 16px 24px;
+    border-bottom: 2px solid var(--rule);
+  }
+
+  /* ================= WORK ROWS ================= */
+  .row {
+    border-bottom: 2px solid var(--rule);
+    cursor: pointer;
+    position: relative;
+  }
+  .row-face {
+    display: flex;
+    align-items: baseline;
+    gap: 20px;
+    padding: 26px 24px;
+    transition: background .18s ease, color .18s ease;
+  }
+  .row:hover .row-face, .row.open .row-face { background: var(--ink); color: var(--paper); }
+  .row .idx { flex: none; width: 44px; }
+  .row h2 {
+    font-variation-settings: 'wdth' 118, 'wght' 900;
+    text-transform: uppercase;
+    font-size: clamp(30px, 6.4vw, 84px);
+    line-height: .95;
+    letter-spacing: -.01em;
+  }
+  .row .meta { margin-left: auto; text-align: right; flex: none; }
+  .row .plus {
+    flex: none;
+    font-variation-settings: 'wdth' 100, 'wght' 300;
+    font-size: clamp(26px, 4vw, 50px);
+    line-height: .9;
+    transition: transform .25s ease;
+  }
+  .row.open .plus { transform: rotate(45deg); }
+  .row-detail {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .35s ease;
+    background: var(--ink);
+    color: var(--paper);
+  }
+  .row.open .row-detail { max-height: 560px; }
+  .detail-inner {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+    padding: 6px 24px 34px 88px;
+  }
+  @media (max-width: 760px) {
+    .detail-inner { grid-template-columns: 1fr; padding-left: 24px; }
+    .row .meta { display: none; }
+  }
+  .detail-inner p { font-size: 15px; line-height: 1.65; max-width: 54ch; }
+  .detail-inner ul { list-style: none; margin-top: 4px; }
+  .detail-inner li { font-size: 14px; line-height: 1.6; padding: 7px 0; border-bottom: 1px solid rgba(244,242,237,.25); }
+  .detail-inner li:last-child { border-bottom: none; }
+  .detail-tags { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .detail-tags span {
+    border: 1px solid rgba(244,242,237,.5);
+    padding: 3px 10px;
+    border-radius: 99px;
+    font-size: 11px;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  /* ================= ABOUT ================= */
+  #about { border-bottom: 2px solid var(--rule); }
+  .statement {
+    padding: 70px 24px 80px;
+    max-width: 1100px;
+  }
+  .statement p {
+    font-variation-settings: 'wdth' 105, 'wght' 640;
+    font-size: clamp(22px, 3.6vw, 44px);
+    line-height: 1.22;
+    letter-spacing: -.01em;
+  }
+  .statement p + p { margin-top: 30px; }
+  .statement .accent { color: var(--blue); }
+  .statement .fine {
+    margin-top: 40px;
+    font-size: 15px;
+    font-variation-settings: 'wdth' 100, 'wght' 450;
+    line-height: 1.7;
+    max-width: 62ch;
+    color: #3c3c3c;
+  }
+
+  /* ================= EXPERIENCE ================= */
+  .xp-row {
+    display: grid;
+    grid-template-columns: 170px 1fr auto;
+    gap: 18px;
+    align-items: baseline;
+    padding: 22px 24px;
+    border-bottom: 2px solid var(--rule);
+  }
+  .xp-row:hover { background: #eae7df; }
+  .xp-row .org {
+    font-variation-settings: 'wdth' 112, 'wght' 800;
+    text-transform: uppercase;
+    font-size: clamp(17px, 2.6vw, 26px);
+  }
+  .xp-row .what { font-size: 14px; color: #3c3c3c; margin-top: 3px; max-width: 66ch; line-height: 1.6; }
+  @media (max-width: 640px) {
+    .xp-row { grid-template-columns: 1fr; gap: 6px; }
+  }
+
+  /* ================= CONTACT ================= */
+  #contact { border-bottom: 2px solid var(--rule); }
+  .shout {
+    display: block;
+    padding: 60px 24px 64px;
+    text-align: left;
+    transition: background .18s ease, color .18s ease;
+  }
+  .shout .giant { font-size: clamp(40px, 11.5vw, 170px); }
+  .shout:hover { background: var(--blue); color: #fff; }
+  .shout:hover .outline { -webkit-text-stroke-color: #fff; }
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    border-top: 2px solid var(--rule);
+  }
+  .links a {
+    flex: 1 1 160px;
+    text-align: center;
+    padding: 20px 10px;
+    border-right: 2px solid var(--rule);
+    transition: background .15s ease, color .15s ease;
+  }
+  .links a:last-child { border-right: none; }
+  .links a:hover { background: var(--ink); color: var(--paper); }
+
+  footer {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px 24px;
+    padding: 18px 24px 26px;
+    color: #6a675f;
+  }
+</style>
+</head>
+<body>
+
+<header class="mono">
+  <span>Ezequiel Alcaraz<span class="dot"> ●</span></span>
+  <nav>
+    <a href="#work">Work</a>
+    <a href="#about">About</a>
+    <a href="#experience">Experience</a>
+    <a href="#contact">Contact</a>
+  </nav>
+  <span class="clock">Sacramento, CA — <span id="clock">--:--</span></span>
+</header>
+
+<section id="hero">
+  <h1 class="giant">Ezequiel<br><span class="outline">Alcaraz</span></h1>
+  <div class="hero-meta mono">
+    <div class="stat">Role<b>Full-Stack Developer</b></div>
+    <div class="stat">Education<b>B.S. CS — Sacramento State</b></div>
+    <div class="stat">Status<b class="avail">Open to work — Dec 2026</b></div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track" id="tickerTrack">
+    <span>Java</span><span class="sep">✦</span><span>Spring Boot</span><span class="sep">✦</span><span>C# / .NET</span><span class="sep">✦</span><span>React</span><span class="sep">✦</span><span>TypeScript</span><span class="sep">✦</span><span>SQL</span><span class="sep">✦</span><span>PostgreSQL</span><span class="sep">✦</span><span>Flutter</span><span class="sep">✦</span><span>Docker</span><span class="sep">✦</span><span>Kubernetes</span><span class="sep">✦</span><span>AWS</span><span class="sep">✦</span><span>Stripe</span><span class="sep">✦</span><span>Azure DevOps</span><span class="sep">✦</span>
+  </div>
+</div>
+
+<section id="work">
+  <div class="sec-label mono"><span>01 — Selected Work</span><span>2024 → Now</span></div>
+
+  <div class="row">
+    <div class="row-face">
+      <span class="idx mono">/01</span>
+      <h2>Belonging Maps</h2>
+      <span class="meta mono">Project Lead<br>2025 →</span>
+      <span class="plus">+</span>
+    </div>
+    <div class="row-detail">
+      <div class="detail-inner">
+        <div>
+          <p>Cross-platform app helping Sacramento State students find campus and community resources on interactive ArcGIS maps. Led the backend/auth workstream on an 8-person capstone team with real stakeholders.</p>
+          <div class="detail-tags"><span>Flutter</span><span>ASP.NET Core</span><span>EF Core</span><span>Azure SQL</span><span>ArcGIS</span><span>JWT</span></div>
+        </div>
+        <ul>
+          <li>Designed the REST API contract the whole team built against</li>
+          <li>Built the full-stack auth slice — Flutter UI → API → EF Core migrations</li>
+          <li>Hardened auth end-to-end: BCrypt, signed JWTs, server-enforced roles, secrets out of the repo</li>
+          <li>Live geolocation with coordinate projection to WGS84</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="row-face">
+      <span class="idx mono">/02</span>
+      <h2>SaaS Billing</h2>
+      <span class="meta mono">Solo Build<br>2026 →</span>
+      <span class="plus">+</span>
+    </div>
+    <div class="row-detail">
+      <div class="detail-inner">
+        <div>
+          <p>Multi-tenant subscription billing platform — Spring Boot backend, React frontend, PostgreSQL, Stripe checkout and webhooks, Supabase auth. Designed backend-first with clean layering.</p>
+          <div class="detail-tags"><span>Java</span><span>Spring Boot</span><span>React</span><span>PostgreSQL</span><span>Stripe</span><span>Docker</span><span>K8s</span></div>
+        </div>
+        <ul>
+          <li>REST billing APIs on controller / service / repository architecture</li>
+          <li>Idempotent Stripe webhook pipeline — retried events can't double-record</li>
+          <li>JWT auth (ES256 via JWKS) plus CORS for the SPA</li>
+          <li>Docker Compose for the full stack, Kubernetes manifests for orchestration</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="row-face">
+      <span class="idx mono">/03</span>
+      <h2>PurJoy Yoga</h2>
+      <span class="meta mono">Freelance<br>2024 →</span>
+      <span class="plus">+</span>
+    </div>
+    <div class="row-detail">
+      <div class="detail-inner">
+        <div>
+          <p>Took a real business off Wix and onto a custom React + TypeScript site — responsive, maintainable, and integrated with their booking workflow.</p>
+          <div class="detail-tags"><span>React</span><span>TypeScript</span><span>Tailwind</span><span>REST APIs</span></div>
+        </div>
+        <ul>
+          <li>Responsive UI across desktop and mobile with Tailwind CSS</li>
+          <li>Third-party scheduling / booking API integrations</li>
+          <li>Debugged and resolved external API failures in production</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about">
+  <div class="sec-label mono"><span>02 — About</span><span>The short version</span></div>
+  <div class="statement">
+    <p>I'm Zeke. I'm studying CS at Sac State and working toward <span class="accent">software and cloud engineering</span>.</p>
+    <p class="fine">Most of my week is split between the IT help desk at the California Department of Public Health, where I've closed over 4,000 tickets, and school. After hours I build: I lead my senior capstone team on a campus maps app, I'm building a subscription billing platform with Spring Boot and Stripe, and I maintain a website I built for a yoga studio. I've been using Docker and Kubernetes in my own projects, and right now I'm learning AWS. I graduate in December 2026 and I'm looking for software engineering, cloud, and DevOps roles.</p>
+  </div>
+</section>
+
+<section id="experience">
+  <div class="sec-label mono"><span>03 — Experience</span><span>2022 → Now</span></div>
+  <div class="xp-row">
+    <span class="mono">Mar 2023 → Now</span>
+    <div>
+      <div class="org">California Dept. of Public Health</div>
+      <div class="what">IT Licensing Help Desk Technician — 4,000+ cases resolved; Agile Scrum testing (E2E, UAT, defect validation) for Power Apps; Azure DevOps; SQL for data-integrity checks.</div>
+    </div>
+    <span class="mono">Sacramento</span>
+  </div>
+  <div class="xp-row">
+    <span class="mono">2024 → Now</span>
+    <div>
+      <div class="org">Freelance Web Developer</div>
+      <div class="what">PurJoy Yoga — custom React/TypeScript site, booking API integrations, production debugging for a paying client.</div>
+    </div>
+    <span class="mono">Remote</span>
+  </div>
+  <div class="xp-row">
+    <span class="mono">Aug 2022 → Dec 2026</span>
+    <div>
+      <div class="org">CSU Sacramento</div>
+      <div class="what">B.S. Computer Science — favorite territory: operating systems, networking, DSA, linear algebra. Capstone project lead.</div>
+    </div>
+    <span class="mono">Sacramento</span>
+  </div>
+</section>
+
+<section id="contact">
+  <div class="sec-label mono"><span>04 — Contact</span><span>Usually replies fast</span></div>
+  <a class="shout" href="mailto:ezequielleonalcaraz@gmail.com">
+    <span class="giant">Let's <span class="outline">talk</span>&nbsp;→</span>
+  </a>
+  <div class="links mono">
+    <a href="mailto:ezequielleonalcaraz@gmail.com">Email</a>
+    <a href="https://github.com/ealeonraz" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.linkedin.com/in/ezequiel-a-2a401824a/" target="_blank" rel="noopener">LinkedIn</a>
+    <a href="resume.pdf" target="_blank">Resume ↓</a>
+  </div>
+</section>
+
+<footer class="mono">
+  <span>© 2026 Ezequiel Alcaraz</span>
+  <span>Designed & built by hand — no frameworks</span>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  /* duplicate ticker content for a seamless loop */
+  var track = document.getElementById('tickerTrack');
+  track.innerHTML += track.innerHTML;
+
+  /* accordion rows */
+  document.querySelectorAll('.row').forEach(function (row) {
+    row.querySelector('.row-face').addEventListener('click', function () {
+      var wasOpen = row.classList.contains('open');
+      document.querySelectorAll('.row.open').forEach(function (r) { r.classList.remove('open'); });
+      if (!wasOpen) row.classList.add('open');
+    });
+  });
+
+  /* local-time clock */
+  function tick() {
+    var d = new Date();
+    var h = d.getHours(), m = d.getMinutes();
+    var ampm = h >= 12 ? 'PM' : 'AM';
+    h = h % 12 || 12;
+    document.getElementById('clock').textContent = h + ':' + (m < 10 ? '0' : '') + m + ' ' + ampm;
+  }
+  tick();
+  setInterval(tick, 15000);
+})();
+</script>
+</body>
+</html>

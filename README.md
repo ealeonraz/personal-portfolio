@@ -1,51 +1,31 @@
 # Ezequiel Alcaraz — Portfolio
 
-A modern developer portfolio built with **React**, **Tailwind CSS**, and **Framer Motion**, showcasing my projects, experience, and technical skills.
+My personal portfolio: a single hand-built HTML page. Big typography, no frameworks, no build step.
 
-🌐 **Live Website:** [ezequielalcaraz.com](https://ezequielalcaraz.com)
+🌐 **Live:** [ezequielalcaraz.com](https://ezequielalcaraz.com)
 
----
+## Stack
 
-## 🧠 About
+- One `index.html` — vanilla HTML/CSS/JS
+- Archivo (variable font) + JetBrains Mono via Google Fonts
+- No dependencies, no build, nothing to install
 
-This portfolio highlights my work as a **Computer Science student** passionate about **software design, full-stack development, and data systems**.  
-It’s built from scratch to emphasize clean structure, performance, and thoughtful presentation.
+## Run locally
 
----
+Open `index.html` in a browser. That's it.
 
-## ⚙️ Tech Stack
+## Structure
 
-- **React + TypeScript** – Scalable, component-based architecture  
-- **Tailwind CSS** – Utility-first styling and responsive design  
-- **Framer Motion** – Smooth animations and transitions  
-- **Lucide Icons** – Lightweight vector icons  
-- **shadcn/ui** – Elegant, minimal UI components  
----
+```
+├── index.html   # the whole site
+├── resume.pdf
+└── README.md
+```
 
-## ✨ Features
+The previous React/Vite version lives in git history and on the `wip-react-redesign` branch.
 
-- 🎨 Modern, dark-themed design  
-- 📄 Integrated resume download  
-- 💼 Real-world projects and experience  
-- 💬 Contact buttons for email, GitHub, and LinkedIn  
-- 📱 Fully responsive layout  
-- ⚡ Minimal and performant build
+## Contact
 
----
-
-## 📫 Contact
-
-- 📧 [ezequielleonalcaraz@gmail.com](mailto:ezequielleonalcaraz@gmail.com)  
-- 💼 [linkedin.com/in/ezequiel-a-2a401824a](https://www.linkedin.com/in/ezequiel-a-2a401824a/)  
+- 📧 [ezequielleonalcaraz@gmail.com](mailto:ezequielleonalcaraz@gmail.com)
+- 💼 [linkedin.com/in/ezequiel-a-2a401824a](https://www.linkedin.com/in/ezequiel-a-2a401824a/)
 - 🧑‍💻 [github.com/ealeonraz](https://github.com/ealeonraz)
-
----
-
-## 📜 License
-
-This project is open-source under the **MIT License**.
-
----
-
-> Built with React, Tailwind, and Framer Motion.  
-> Designed to be fast, simple, and thoughtfully modern.
