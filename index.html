@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ezequiel Alcaraz — Full-Stack Developer</title>
-<meta name="description" content="Ezequiel 'Zeke' Alcaraz — full-stack developer. Java/Spring Boot, C#/.NET, React, TypeScript, SQL. Sacramento, CA.">
+<title>Ezequiel Alcaraz · Software Engineer</title>
+<meta name="description" content="Ezequiel 'Zeke' Alcaraz, software engineer working in backend and cloud. Java, Spring Boot, C#/.NET, React, TypeScript, SQL, Docker, Kubernetes. Contributor to Apache ShardingSphere. Sacramento, CA.">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23111'/><text x='50' y='72' font-size='62' font-family='Arial Black' fill='%23fff' text-anchor='middle'>Z</text></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -81,28 +81,47 @@
   .hero-meta .stat b { display: block; font-variation-settings: 'wdth' 110, 'wght' 800; font-size: 15px; text-transform: uppercase; letter-spacing: 0; margin-top: 3px; font-family: 'Archivo'; }
   .avail { color: var(--blue); }
 
-  /* ================= TICKER ================= */
-  .ticker {
-    overflow: hidden;
-    border-bottom: 2px solid var(--rule);
+  /* ================= STACK ================= */
+  .stack {
     background: var(--ink);
     color: var(--paper);
-    padding: 12px 0;
-    white-space: nowrap;
+    border-bottom: 2px solid var(--rule);
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
   }
-  .ticker-track {
-    display: inline-flex;
-    animation: slide 26s linear infinite;
+  .stack .grp {
+    padding: 20px 24px 22px;
+    border-right: 1px solid rgba(244,242,237,.22);
   }
-  .ticker span {
-    font-variation-settings: 'wdth' 115, 'wght' 700;
+  .stack .grp:last-child { border-right: none; }
+  .stack .lbl {
+    display: block;
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+    color: rgba(244,242,237,.55);
+    margin-bottom: 11px;
+  }
+  .stack ul { list-style: none; }
+  .stack li {
+    font-variation-settings: 'wdth' 112, 'wght' 700;
     text-transform: uppercase;
     font-size: 15px;
-    letter-spacing: .06em;
-    padding-right: 14px;
+    letter-spacing: .04em;
+    line-height: 1.55;
   }
-  .ticker .sep { color: var(--blue); -webkit-text-stroke: 0; }
-  @keyframes slide { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @media (max-width: 880px) {
+    .stack { grid-template-columns: repeat(2, 1fr); }
+    .stack .grp { border-bottom: 1px solid rgba(244,242,237,.22); }
+    .stack .grp:nth-child(2n) { border-right: none; }
+    .stack .grp:nth-last-child(-n+2) { border-bottom: none; }
+  }
+  @media (max-width: 460px) {
+    .stack { grid-template-columns: 1fr; }
+    .stack .grp { border-right: none; border-bottom: 1px solid rgba(244,242,237,.22); }
+    .stack .grp:last-child { border-bottom: none; }
+  }
 
   /* ================= SECTION LABELS ================= */
   .sec-label {
@@ -219,6 +238,24 @@
     .xp-row { grid-template-columns: 1fr; gap: 6px; }
   }
 
+  /* ================= OPEN SOURCE ================= */
+  .os-row .repo { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+  .prnum {
+    font-family: 'JetBrains Mono', Consolas, monospace;
+    font-size: 11px;
+    letter-spacing: .1em;
+    color: var(--blue);
+    white-space: nowrap;
+  }
+  .os-row:hover .prnum { color: var(--blue); }
+  .os-more {
+    display: block;
+    padding: 18px 24px;
+    border-bottom: 2px solid var(--rule);
+    transition: background .15s ease, color .15s ease;
+  }
+  .os-more:hover { background: var(--ink); color: var(--paper); }
+
   /* ================= CONTACT ================= */
   #contact { border-bottom: 2px solid var(--rule); }
   .shout {
@@ -261,31 +298,45 @@
   <span>Ezequiel Alcaraz<span class="dot"> ●</span></span>
   <nav>
     <a href="#work">Work</a>
+    <a href="#opensource">Open Source</a>
     <a href="#about">About</a>
     <a href="#experience">Experience</a>
     <a href="/journal/">Journal</a>
     <a href="#contact">Contact</a>
   </nav>
-  <span class="clock">Sacramento, CA — <span id="clock">--:--</span></span>
+  <span class="clock">Sacramento, CA · <span id="clock">--:--</span></span>
 </header>
 
 <section id="hero">
   <h1 class="giant">Ezequiel<br><span class="outline">Alcaraz</span></h1>
   <div class="hero-meta mono">
-    <div class="stat">Role<b>Full-Stack Developer</b></div>
-    <div class="stat">Education<b>B.S. CS — Sacramento State</b></div>
-    <div class="stat">Status<b class="avail">Open to work — Dec 2026</b></div>
+    <div class="stat">Role<b>Software Engineer · Backend &amp; Cloud</b></div>
+    <div class="stat">Education<b>B.S. CS · Sacramento State</b></div>
+    <div class="stat">Status<b class="avail">Open to work · Dec 2026</b></div>
   </div>
 </section>
 
-<div class="ticker" aria-hidden="true">
-  <div class="ticker-track" id="tickerTrack">
-    <span>Java</span><span class="sep">✦</span><span>Spring Boot</span><span class="sep">✦</span><span>C# / .NET</span><span class="sep">✦</span><span>React</span><span class="sep">✦</span><span>TypeScript</span><span class="sep">✦</span><span>SQL</span><span class="sep">✦</span><span>PostgreSQL</span><span class="sep">✦</span><span>Flutter</span><span class="sep">✦</span><span>Docker</span><span class="sep">✦</span><span>Kubernetes</span><span class="sep">✦</span><span>AWS</span><span class="sep">✦</span><span>Stripe</span><span class="sep">✦</span><span>Azure DevOps</span><span class="sep">✦</span>
+<section class="stack" aria-label="Technologies I work with">
+  <div class="grp">
+    <span class="lbl">Backend</span>
+    <ul><li>Java</li><li>Spring Boot</li><li>C# / .NET</li></ul>
   </div>
-</div>
+  <div class="grp">
+    <span class="lbl">Data</span>
+    <ul><li>PostgreSQL</li><li>SQL</li></ul>
+  </div>
+  <div class="grp">
+    <span class="lbl">Frontend</span>
+    <ul><li>React</li><li>TypeScript</li><li>Flutter</li></ul>
+  </div>
+  <div class="grp">
+    <span class="lbl">Infrastructure</span>
+    <ul><li>Docker</li><li>Kubernetes</li><li>AWS</li><li>Azure DevOps</li></ul>
+  </div>
+</section>
 
 <section id="work">
-  <div class="sec-label mono"><span>01 — Selected Work</span><span>2024 → Now</span></div>
+  <div class="sec-label mono"><span>01 · Selected Work</span><span>2025 → Now</span></div>
 
   <div class="row">
     <div class="row-face">
@@ -302,7 +353,7 @@
         </div>
         <ul>
           <li>Designed the REST API contract the whole team built against</li>
-          <li>Built the full-stack auth slice — Flutter UI → API → EF Core migrations</li>
+          <li>Built the full-stack auth slice: Flutter UI → API → EF Core migrations</li>
           <li>Hardened auth end-to-end: BCrypt, signed JWTs, server-enforced roles, secrets out of the repo</li>
           <li>Live geolocation with coordinate projection to WGS84</li>
         </ul>
@@ -320,12 +371,12 @@
     <div class="row-detail">
       <div class="detail-inner">
         <div>
-          <p>Multi-tenant subscription billing platform — Spring Boot backend, React frontend, PostgreSQL, Stripe checkout and webhooks, Supabase auth. Designed backend-first with clean layering.</p>
+          <p>Multi-tenant subscription billing platform built on a Spring Boot backend, React frontend, PostgreSQL, Stripe checkout and webhooks, and Supabase auth. Designed backend-first with clean layering.</p>
           <div class="detail-tags"><span>Java</span><span>Spring Boot</span><span>React</span><span>PostgreSQL</span><span>Stripe</span><span>Docker</span><span>K8s</span></div>
         </div>
         <ul>
           <li>REST billing APIs on controller / service / repository architecture</li>
-          <li>Idempotent Stripe webhook pipeline — retried events can't double-record</li>
+          <li>Idempotent Stripe webhook pipeline, so retried events can't double-record</li>
           <li>JWT auth (ES256 via JWKS) plus CORS for the SPA</li>
           <li>Docker Compose for the full stack, Kubernetes manifests for orchestration</li>
         </ul>
@@ -337,13 +388,13 @@
     <div class="row-face">
       <span class="idx mono">/03</span>
       <h2>PurJoy Yoga</h2>
-      <span class="meta mono">Freelance<br>2024 →</span>
+      <span class="meta mono">Freelance<br>2026 →</span>
       <span class="plus">+</span>
     </div>
     <div class="row-detail">
       <div class="detail-inner">
         <div>
-          <p>Took a real business off Wix and onto a custom React + TypeScript site — responsive, maintainable, and integrated with their booking workflow.</p>
+          <p>Took a real business off Wix and onto a custom React + TypeScript site that is responsive, maintainable, and integrated with their booking workflow.</p>
           <div class="detail-tags"><span>React</span><span>TypeScript</span><span>Tailwind</span><span>REST APIs</span></div>
         </div>
         <ul>
@@ -356,44 +407,68 @@
   </div>
 </section>
 
+<section id="opensource">
+  <div class="sec-label mono"><span>02 · Open Source</span><span>Merged upstream</span></div>
+
+  <a class="xp-row os-row" href="https://github.com/apache/shardingsphere/pull/39201" target="_blank" rel="noopener">
+    <span class="mono">Merged Jul 2026</span>
+    <div>
+      <div class="repo"><span class="org">Apache ShardingSphere</span><span class="prnum">PR #39201</span></div>
+      <div class="what">Taught the Doris SQL parser to read multi range partitions and per partition property lists in CREATE TABLE. ANTLR4 grammar change plus parser integration cases, closing an open issue on the project's Doris dialect support.</div>
+    </div>
+    <span class="mono">Java · ANTLR4 ↗</span>
+  </a>
+
+  <a class="xp-row os-row" href="https://github.com/lightly-ai/lightly/pull/2001" target="_blank" rel="noopener">
+    <span class="mono">Merged Jul 2026</span>
+    <div>
+      <div class="repo"><span class="org">Lightly</span><span class="prnum">PR #2001</span></div>
+      <div class="what">Migrated the model test suite of this self supervised learning library from unittest to pytest. Seven files, 301 lines removed, duplicated CPU and CUDA tests collapsed into parametrized cases with no change in behavior.</div>
+    </div>
+    <span class="mono">Python · pytest ↗</span>
+  </a>
+
+  <a class="os-more mono" href="/journal/open-source/">How each one happened, written up in the journal &nbsp;→</a>
+</section>
+
 <section id="about">
-  <div class="sec-label mono"><span>02 — About</span><span>The short version</span></div>
+  <div class="sec-label mono"><span>03 · About</span><span>The short version</span></div>
   <div class="statement">
     <p>I'm Zeke. I'm studying CS at Sac State and working toward <span class="accent">software and cloud engineering</span>.</p>
-    <p class="fine">Most of my week is split between the IT help desk at the California Department of Public Health, where I've closed over 4,000 tickets, and school. After hours I build: I lead my senior capstone team on a campus maps app, I'm building a subscription billing platform with Spring Boot and Stripe, and I maintain a website I built for a yoga studio. I've been using Docker and Kubernetes in my own projects, and right now I'm learning AWS. I graduate in December 2026 and I'm looking for software engineering, cloud, and DevOps roles.</p>
+    <p class="fine">Outside of class I build projects and contribute to open source. I've had two patches merged, a SQL parser fix in Apache ShardingSphere and a test suite migration in Lightly. I've been doing more with containers and cloud infrastructure lately. I graduate in December 2026 and I'm looking for software engineering, cloud, and DevOps roles.</p>
   </div>
 </section>
 
 <section id="experience">
-  <div class="sec-label mono"><span>03 — Experience</span><span>2022 → Now</span></div>
+  <div class="sec-label mono"><span>04 · Experience</span><span>2022 → Now</span></div>
+  <div class="xp-row">
+    <span class="mono">2026 → Now</span>
+    <div>
+      <div class="org">Freelance Web Developer</div>
+      <div class="what">PurJoy Yoga. Custom React/TypeScript site, booking API integrations, production debugging for a paying client.</div>
+    </div>
+    <span class="mono">Remote</span>
+  </div>
   <div class="xp-row">
     <span class="mono">Mar 2023 → Now</span>
     <div>
       <div class="org">California Dept. of Public Health</div>
-      <div class="what">IT Licensing Help Desk Technician — 4,000+ cases resolved; Agile Scrum testing (E2E, UAT, defect validation) for Power Apps; Azure DevOps; SQL for data-integrity checks.</div>
+      <div class="what">IT Licensing Help Desk Technician. 4,000+ cases resolved; Agile Scrum testing (E2E, UAT, defect validation) for Power Apps; Azure DevOps; SQL for data-integrity checks.</div>
     </div>
     <span class="mono">Sacramento</span>
-  </div>
-  <div class="xp-row">
-    <span class="mono">2024 → Now</span>
-    <div>
-      <div class="org">Freelance Web Developer</div>
-      <div class="what">PurJoy Yoga — custom React/TypeScript site, booking API integrations, production debugging for a paying client.</div>
-    </div>
-    <span class="mono">Remote</span>
   </div>
   <div class="xp-row">
     <span class="mono">Aug 2022 → Dec 2026</span>
     <div>
       <div class="org">CSU Sacramento</div>
-      <div class="what">B.S. Computer Science — favorite territory: operating systems, networking, DSA, linear algebra. Capstone project lead.</div>
+      <div class="what">B.S. Computer Science. Favorite territory: operating systems, networking, DSA, linear algebra. Capstone project lead.</div>
     </div>
     <span class="mono">Sacramento</span>
   </div>
 </section>
 
 <section id="contact">
-  <div class="sec-label mono"><span>04 — Contact</span><span>Usually replies fast</span></div>
+  <div class="sec-label mono"><span>05 · Contact</span><span>Usually replies fast</span></div>
   <a class="shout" href="mailto:ezequielleonalcaraz@gmail.com">
     <span class="giant">Let's <span class="outline">talk</span>&nbsp;→</span>
   </a>
@@ -407,16 +482,12 @@
 
 <footer class="mono">
   <span>© 2026 Ezequiel Alcaraz</span>
-  <span>Designed & built by hand — no frameworks</span>
+  <span>Designed & built by hand, no frameworks</span>
 </footer>
 
 <script>
 (function () {
   'use strict';
-
-  /* duplicate ticker content for a seamless loop */
-  var track = document.getElementById('tickerTrack');
-  track.innerHTML += track.innerHTML;
 
   /* accordion rows */
   document.querySelectorAll('.row').forEach(function (row) {
