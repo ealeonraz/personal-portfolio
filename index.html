@@ -410,6 +410,15 @@
 <section id="opensource">
   <div class="sec-label mono"><span>02 · Open Source</span><span>Merged upstream</span></div>
 
+  <a class="xp-row os-row" href="https://github.com/kubernetes-client/python/pull/2644" target="_blank" rel="noopener">
+    <span class="mono">Merged Aug 2026</span>
+    <div>
+      <div class="repo"><span class="org">Kubernetes Python Client</span><span class="prnum">PR #2644</span></div>
+      <div class="what">Fixed OIDC token refresh raising a PermissionError on Windows. The client wrote the identity provider certificate to a temp file and reopened it by name, which Windows refuses while the first handle is open. The fix routes it through the temp file helper already used elsewhere in the module.</div>
+    </div>
+    <span class="mono">Python · CNCF ↗</span>
+  </a>
+
   <a class="xp-row os-row" href="https://github.com/apache/shardingsphere/pull/39201" target="_blank" rel="noopener">
     <span class="mono">Merged Jul 2026</span>
     <div>
@@ -428,14 +437,14 @@
     <span class="mono">Python · pytest ↗</span>
   </a>
 
-  <a class="os-more mono" href="/journal/open-source/">How each one happened, written up in the journal &nbsp;→</a>
+  <a class="os-more mono" href="/journal/">How each one happened, written up in the journal &nbsp;→</a>
 </section>
 
 <section id="about">
   <div class="sec-label mono"><span>03 · About</span><span>The short version</span></div>
   <div class="statement">
     <p>I'm Zeke. I'm studying CS at Sac State and working toward <span class="accent">software and cloud engineering</span>.</p>
-    <p class="fine">Outside of class I build projects and contribute to open source. I've had two patches merged, a SQL parser fix in Apache ShardingSphere and a test suite migration in Lightly. I've been doing more with containers and cloud infrastructure lately. I graduate in December 2026 and I'm looking for software engineering, cloud, and DevOps roles.</p>
+    <p class="fine">Outside of class I build projects and contribute to open source. I've had three patches merged, a SQL parser fix in Apache ShardingSphere, a Windows bug fix in the Kubernetes Python client, and a test suite migration in Lightly. I've been doing more with containers and cloud infrastructure lately. I graduate in December 2026 and I'm looking for software engineering, cloud, and DevOps roles.</p>
   </div>
 </section>
 

@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Open Source — Journal — Ezequiel Alcaraz</title>
-<meta name="description" content="Notes on two patches merged into projects I did not write: an ANTLR4 grammar fix in Apache ShardingSphere and a test suite migration in Lightly.">
+<meta name="description" content="Notes on two merged patches: an ANTLR4 grammar change in Apache ShardingSphere and a test suite migration in Lightly.">
 <link rel="stylesheet" href="../assets/reader.css">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23111'/><text x='50' y='72' font-size='62' font-family='Arial Black' fill='%23fff' text-anchor='middle'>Z</text></svg>">
 </head>
@@ -20,12 +20,11 @@
 
   <article class="plain">
     <p class="eyebrow">journal &middot; 2 august 2026</p>
-    <h2>Two patches, merged</h2>
-    <p class="lede">Both of these landed in projects I did not write, in codebases far too large to
-    read. One is Java, one is Python. The code in each was small. Everything around the code was
-    the actual work, so that is mostly what I want to write down.</p>
+    <h2>Two merged patches</h2>
+    <p class="lede">Notes on two patches merged into projects I had not worked on before. One is a
+    grammar change in Java, the other is a test migration in Python.</p>
 
-    <h3>Apache ShardingSphere: teaching a parser about Doris partitions</h3>
+    <h3>Apache ShardingSphere: Doris partition syntax</h3>
 
     <dl class="kv">
       <div><dt>Project</dt><dd>Apache ShardingSphere, a distributed SQL layer that shards, routes and rewrites queries</dd></div>
@@ -35,10 +34,9 @@
       <div><dt>Link</dt><dd><a href="https://github.com/apache/shardingsphere/pull/39201" target="_blank" rel="noopener">apache/shardingsphere #39201</a></dd></div>
     </dl>
 
-    <p>To do anything useful with a SQL statement, ShardingSphere has to understand it first. That
-    understanding comes from ANTLR4 grammar files, one set per SQL dialect, which describe the shape
-    of every statement the engine will accept. If a dialect has syntax the grammar does not describe,
-    the parser simply fails on it. There is no partial credit.</p>
+    <p>ShardingSphere parses SQL before it can route or rewrite it. The parsing is driven by ANTLR4
+    grammar files, one set per SQL dialect, which describe every statement the engine accepts. If a
+    dialect has syntax the grammar does not describe, the parser fails on that statement.</p>
 
     <p>Doris is one of the supported dialects, and its grammar had a gap around partitions. An open
     issue listed statements that were failing to parse. Three kinds of partition syntax were falling
@@ -56,13 +54,12 @@ PARTITION p1 VALUES [("2022-01-01"), ("2022-02-01"))
 PARTITION p1 VALUES LESS THAN ("2022-01-01")
   ("storage_policy" = "cooldown", "replication_num" = "1")</code></pre>
 
-    <p>The useful discovery was that none of this was new syntax to the project. Doris already
-    accepted all three forms in <span class="mono">ALTER TABLE</span>, and the grammar already had
-    rules for them. They had just never been wired into the <span class="mono">CREATE TABLE</span>
-    path. So the fix was less about inventing grammar and more about reusing rules that were already
-    sitting there.</p>
+    <p>None of this was new syntax to the project. Doris already accepted all three forms in
+    <span class="mono">ALTER TABLE</span>, and the grammar already had rules for them. They had not
+    been wired into the <span class="mono">CREATE TABLE</span> path. So the change mostly reuses
+    rules that already existed.</p>
 
-    <p>The core of it was splitting the list of partition definitions so an entry could be either an
+    <p>The main part was splitting the list of partition definitions so an entry could be either an
     ordinary partition or a multi range expansion:</p>
 
     <pre><code><span class="c">// before</span>
@@ -85,30 +82,29 @@ dorisMultiRangePartition
 
     <p>Then <span class="mono">partitionDefinition</span> itself gained the fixed range alternative
     inside its <span class="mono">VALUES</span> clause and an optional
-    <span class="mono">(LP_ properties RP_)</span> for the per partition property list, again reusing
-    the existing <span class="mono">properties</span> rule rather than writing a new one.</p>
+    <span class="mono">(LP_ properties RP_)</span> for the per partition property list, reusing the
+    existing <span class="mono">properties</span> rule.</p>
 
     <div class="aside key">
-      <span class="l">what I would not have guessed</span>
+      <span class="l">repo convention</span>
       <p>ShardingSphere marks dialect specific edits inside shared grammar with
       <span class="mono">// DORIS CHANGED BEGIN</span> and
-      <span class="mono">// DORIS ADDED BEGIN</span> comment fences. I only found that by reading
-      the surrounding file. Nothing in the contributing guide mentions it, and a patch that ignored
-      the convention would have been correct and still wrong.</p>
+      <span class="mono">// DORIS ADDED BEGIN</span> comment fences. This is not in the contributing
+      guide. I found it by reading the surrounding file. A first revision that used the wrong fence
+      was flagged in review and corrected.</p>
     </div>
 
     <p>The rest of the diff, 56 of the 73 lines, is test cases: SQL samples plus the expected parse
-    assertions in the project's XML fixture format. That ratio felt about right. A grammar change
-    with no cases proves nothing, since the whole claim is that a statement that used to fail now
-    parses into a specific tree.</p>
+    assertions in the project's XML fixture format. A grammar change needs them, because the claim
+    being made is that a statement which used to fail now parses into a specific tree.</p>
 
     <p>Before opening the PR I ran the Doris parser integration suite locally and put the result in
     the description: 1261 tests, zero failures. The issue also listed a few SQL fragments that were
-    not actually valid standalone statements, plus one case that already parsed on master. I said so
-    explicitly rather than quietly skipping them, because a reviewer seeing four assertions against
-    a list of seven cases will otherwise wonder what happened to the other three.</p>
+    not valid standalone statements, plus one case that already parsed on master. I said so in the
+    description rather than skipping them silently, so it was clear why there were four assertions
+    against a list of seven cases.</p>
 
-    <h3>Lightly: moving a test suite off unittest</h3>
+    <h3>Lightly: unittest to pytest</h3>
 
     <dl class="kv">
       <div><dt>Project</dt><dd>Lightly, a Python library for self supervised learning on images</dd></div>
@@ -118,7 +114,7 @@ dorisMultiRangePartition
       <div><dt>Link</dt><dd><a href="https://github.com/lightly-ai/lightly/pull/2001" target="_blank" rel="noopener">lightly-ai/lightly #2001</a></dd></div>
     </dl>
 
-    <p>This one came from an umbrella issue: the maintainers wanted the whole test suite moved from
+    <p>This came from an umbrella issue. The maintainers wanted the test suite moved from
     <span class="mono">unittest.TestCase</span> to plain pytest, split into groups so several people
     could work in parallel without colliding. I took the models group, seven files.</p>
 
@@ -128,9 +124,9 @@ dorisMultiRangePartition
     <span class="mono">assertRaises</span> with <span class="mono">pytest.raises</span>, and swap
     <span class="mono">@unittest.skipUnless</span> for <span class="mono">@pytest.mark.skipif</span>.</p>
 
-    <p>The one genuinely interesting pattern was how the suite handled GPU tests. Every device
-    sensitive test existed twice: a real test defaulting to CPU, and a thin CUDA wrapper that called
-    it back with different arguments.</p>
+    <p>The largest change was to how the suite handled GPU tests. Every device sensitive test
+    existed twice: a real test defaulting to CPU, and a CUDA wrapper that called it back with
+    different arguments.</p>
 
     <pre><code><span class="c"># before: two methods, one of them a shim</span>
 def test_single_projection_head(self, device: str = <span class="s">"cpu"</span>, seed: int = 0) -&gt; None:
@@ -148,44 +144,35 @@ def test_single_projection_head(self, device: str) -&gt; None:
     ...</code></pre>
 
     <p>That is where most of the 301 deleted lines went. The nested
-    <span class="mono">subTest</span> loops came out too, since pytest reports a failing parametrized
-    case clearly enough on its own.</p>
+    <span class="mono">subTest</span> loops came out as well, since pytest reports a failing
+    parametrized case on its own.</p>
 
     <div class="aside flag">
-      <span class="l">the constraint that shapes everything</span>
-      <p>A refactor PR has exactly one promise: no behavior changes. Which means every judgment call
-      resolves the same way. When a test looked wrong, I left it wrong. When a name was bad, I kept
-      it. Anything I improved along the way would have been a thing the reviewer had to verify
-      separately, and it would have made a mechanical diff into an argument.</p>
+      <span class="l">no behaviour changes</span>
+      <p>The point of a refactor PR is that nothing changes except the structure. So when a test
+      looked wrong I left it, and when a name was poor I kept it. Any improvement made along the way
+      would be something the reviewer had to check separately, on top of a diff that is otherwise
+      mechanical.</p>
     </div>
 
-    <p>There was also an existing config detail worth respecting: five of the seven files are
-    excluded from mypy, and two are not. I left the exclusions exactly as they were, matched what
-    the sibling PRs in the same umbrella issue had done, and confirmed in the description that ruff,
-    mypy and pytest were all clean on the directory.</p>
+    <p>There was also an existing config detail to respect: five of the seven files are excluded
+    from mypy, and two are not. I left the exclusions as they were, matched what the sibling PRs in
+    the same umbrella issue had done, and confirmed in the description that ruff, mypy and pytest
+    were all clean on the directory.</p>
 
-    <h3>What actually mattered</h3>
-
-    <p>Both of these were small diffs, and in both cases writing the code was the short part of the
-    work. The pattern that keeps repeating:</p>
+    <h3>Notes</h3>
 
     <ul>
-      <li><strong>Find the precedent before writing anything.</strong> Both patches had a template
-      already in the repo. ShardingSphere had the same partition rules working under
-      <span class="mono">ALTER TABLE</span>. Lightly had sibling migration PRs and a reference file
-      the maintainers pointed to. Matching an existing pattern is worth more than a better idea.</li>
-      <li><strong>House style beats personal preference every time.</strong> Comment fences, mypy
-      exclusions, fixture naming. None of it is what I would have chosen and all of it is what the
-      project uses.</li>
-      <li><strong>Run the verification and then say you ran it.</strong> Test counts, linter
-      results, which suite. A maintainer reviewing on limited time should not have to guess whether
-      you checked.</li>
-      <li><strong>Say what you deliberately did not do.</strong> Both descriptions have a paragraph
-      explaining a decision to leave something alone. That paragraph prevents the review round trip
-      where someone asks why a case is missing.</li>
-      <li><strong>Keep the scope boring.</strong> The temptation in an unfamiliar codebase is to
-      prove you understand it. The reviewer wants the opposite: a diff small enough to hold in their
-      head.</li>
+      <li>Both patches had a precedent in the repo already. ShardingSphere had the same partition
+      rules working under <span class="mono">ALTER TABLE</span>, and Lightly had sibling migration
+      PRs plus a reference file the maintainers pointed to.</li>
+      <li>Conventions like the comment fences and the mypy exclusions are not what I would have
+      chosen, but they are what the projects use.</li>
+      <li>I ran the test suites before opening each PR and put the counts in the description.</li>
+      <li>Both descriptions explain something I chose not to do. That saves a round trip where a
+      reviewer asks why a case is missing.</li>
+      <li>Both diffs are small. In a codebase I do not know, that is easier for a reviewer to
+      check.</li>
     </ul>
   </article>
 </main>
