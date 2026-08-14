@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Installing Proxmox without USB or a working screen — Journal — Ezequiel Alcaraz</title>
+<meta name="description" content="Notes on installing Proxmox VE over PXE after a defective USB stick, and finishing with an unattended answer file after the installer could not render on the monitor.">
+<link rel="stylesheet" href="../assets/reader.css">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%23111'/><text x='50' y='72' font-size='62' font-family='Arial Black' fill='%23fff' text-anchor='middle'>Z</text></svg>">
+<style>
+  figure.shot { margin: 1.5rem 0; }
+  figure.shot img { max-width: 100%; border-radius: 6px; display: block; }
+  figure.shot figcaption { font-size: 0.85em; opacity: 0.7; margin-top: 0.5rem; }
+</style>
+</head>
+<body>
+
+<main id="main">
+  <div id="topbar">
+    <a class="tbtn" href="../">&larr; journal</a>
+    <span id="crumb">proxmox over pxe</span>
+    <span class="gap"></span>
+    <button class="tbtn" id="themebtn">dark</button>
+  </div>
+
+  <article class="plain">
+    <p class="eyebrow">journal &middot; 14 august 2026</p>
+    <h2>Installing Proxmox without USB or a working screen</h2>
+    <p class="lede">Notes on setting up a home lab server. The USB stick for the installer turned
+    out to be defective, so the install ran over the network instead. The installer could not
+    render on the monitor, so the last attempt ran unattended from an answer file.</p>
+
+    <dl class="kv">
+      <div><dt>Hardware</dt><dd>Lenovo ThinkCentre M70q Gen 3 Tiny, i5-12400T, 16GB, 512GB NVMe, used, about $290 on eBay</dd></div>
+      <div><dt>Install target</dt><dd>Proxmox VE 9.2, boot server on a Windows 11 laptop over WiFi</dd></div>
+      <div><dt>Tools</dt><dd>Rufus, Tiny PXE Server, iPXE, iVentoy, WSL2, Docker, proxmox-auto-install-assistant</dd></div>
+      <div><dt>Result</dt><dd>Unattended install completed in about 3 minutes. The machine runs headless on a static IP.</dd></div>
+    </dl>
+
+    <h3>The USB stick</h3>
+
+    <p>The first plan was the normal one, flash the ISO to a USB stick with Rufus and boot from
+    it. The stick was a Memorex 64GB bought new. The first flash wrote at about 2 MB/s and then
+    Rufus stopped responding. Killing it mid-write corrupted the partition table. Windows showed
+    insert disk errors and a PowerShell wipe with <span class="mono">Clear-Disk</span> hung,
+    because the stick was also dropping off the USB bus on its own. Unplugging and replugging it
+    reset the controller, and after that a full wipe and exFAT format finished in seconds. This
+    was misleading. Short writes worked, so the stick looked healthy.</p>
+
+    <p>A second flash in a rear USB 3 port stalled the same way. This time I watched the disk
+    performance counters instead of the Rufus window. No write activity for over three minutes
+    while the UI still said Writing image with the timer counting. The timer is a clock, not
+    proof of progress.</p>
+
+    <p>To rule out Rufus, a PowerShell script wrote 1GB of random data to the stick in 8MB chunks
+    with forced flushes. The stick accepted about 49MB over 13 minutes, then locked up the volume
+    so hard a file size query hung. That reproduced the failure with no flashing tool involved.
+    The stick handles short writes and fails partway into any sustained sequential write, then
+    wedges its controller until power cycled. It went back to the store.</p>
+
+    <p>Rather than buy another stick I decided to install over the network, since the machine
+    exists to learn networking anyway.</p>
+
+    <h3>PXE boot</h3>
+
+    <p>A machine with no operating system can boot from the network. The firmware broadcasts a
+    DHCP request, a boot server answers with a file name, the firmware downloads that file over
+    TFTP and runs it. The file is a small bootloader called iPXE, which then downloads the real
+    payload over HTTP, since TFTP is too slow for large files.</p>
+
+    <p>The constraint was that this had to run on the home network without disturbing it. A
+    second DHCP server handing out addresses can conflict with the router and break connectivity
+    for every device on the network. The PXE spec covers this with proxyDHCP. A proxy answers only the boot questions and hands out no
+    addresses, the router keeps assigning IPs, and devices that are not PXE booting never see it.
+    I ran Tiny PXE Server on my laptop in proxy mode.</p>
+
+    <p>The first boot attempt produced nothing on the client. The server log had the reason:</p>
+
+    <pre><code>OFFER sent, IP:0.0.0.0
+TFTPd:DoReadFile OpenError:ipxe-x86_64.efi
+Cannot open file "C:\pxe\ipxe-x86_64.efi"</code></pre>
+
+    <p>The TFTP root was <span class="mono">C:\pxe</span> and the boot files were one folder
+    deeper. After moving them, the log showed the transfer complete and iPXE started on the
+    client. Most of the failures this night looked like this: nothing visible on the machine
+    being installed, and a specific reason in a log on the machine doing the serving.</p>
+
+    <h3>The initrd size limit</h3>
+
+    <p>The Proxmox installer expects to find its install media on a disc or USB stick. To netboot
+    it, a community script repacks the whole ISO inside the initrd, the filesystem the kernel
+    loads into memory at boot. For Proxmox 9.2 the result is 2.0GB. iPXE under UEFI would not
+    load it. It read the file size from the HTTP response header and exited before transferring
+    anything. Older Proxmox ISOs were small enough for this method, which is why the guides that
+    describe it worked when they were written.</p>
+
+    <h3>iVentoy</h3>
+
+    <p>iVentoy avoids the size problem by emulating a disk over the network and serving blocks of
+    the ISO on demand, so nothing has to fit in memory. It failed silently three times before it
+    worked, each time with the same symptom on the client, a PXE prompt that timed out with no
+    answer, and each time for a different reason.</p>
+
+    <ul>
+      <li>It bound to a VirtualBox host-only adapter instead of the real WiFi adapter, so the
+      boot requests arrived on an interface it was not listening on.</li>
+      <li>Windows Firewall had no rules for it. Two <span class="mono">netsh</span> rules opened
+      UDP 67, 69 and 4011, and TCP 16000.</li>
+      <li>Its proxy mode does not open a socket on port 67 at all. <span class="mono">netstat
+      -ano</span> showed ports 69 and 4011 held by the process and port 67 owned by nothing, and
+      whatever mechanism it uses to see DHCP broadcasts without a socket does not work on this
+      WiFi adapter. Tiny PXE Server had received the same broadcasts on the same adapter through
+      a normal socket.</li>
+    </ul>
+
+    <p>There was also a restart bug. Stopping and starting the service from its own web UI leaked
+    the DHCP socket, and the next start failed against it:</p>
+
+    <pre><code>Failed to bind socket 10.0.0.33:4011 errno:10048
+Only one usage of each socket address is normally permitted.</code></pre>
+
+    <p>Killing the process was the only thing that released the port.</p>
+
+    <p>Since proxy mode could not work on this adapter, I switched iVentoy to internal mode,
+    which is a real DHCP server with a normal socket on port 67. That is the configuration the
+    proxy exists to avoid, so the risk got limited instead: the lease pool did not overlap the
+    router&rsquo;s, every lease carried a working gateway and DNS so any device that took one
+    would still function, it ran after midnight, and it was stopped as soon as the install
+    finished. The next boot reached the iVentoy menu.</p>
+
+    <h3>The display</h3>
+
+    <figure class="shot">
+      <img src="garbled-framebuffer.jpg" alt="Monitor showing a band of corrupted static above a blank blue area">
+      <figcaption>The installer after the kernel takes over the display. The boot menus before
+      this point rendered normally.</figcaption>
+    </figure>
+
+    <p>The boot menus were readable because they use the display mode the firmware set. When the
+    Linux kernel reprogrammed the display, the monitor showed the band of static above. The
+    graphical installer and the terminal installer were equally unreadable, and
+    <span class="mono">nomodeset</span> did not change it. Pressing tab moved focus between form
+    fields I could not see. I was not going to fill in a disk wipe form blind.</p>
+
+    <h3>Unattended install</h3>
+
+    <p>Proxmox supports automated installation. You write a TOML answer file containing every
+    choice the installer would ask for, and an official tool bakes it into the ISO. The result
+    installs without asking anything, which also means it does not need a screen.</p>
+
+    <p>The tool is packaged for Debian and the laptop runs Windows, so it ran in a temporary
+    Docker container. One more iVentoy detail cost time here: the process holds open file handles
+    on its ISOs even while its service is stopped, so replacing the ISO meant killing the
+    process, swapping the file, and relaunching.</p>
+
+    <h3>The bug in my answer file</h3>
+
+    <p>The first automated run went silent. The server logs showed the installer boot, mount the
+    virtual disk, and request an address at 00:46. Then nothing until a DHCP lease renewal 25
+    minutes later. The renewal meant the installer environment was still running and still idle.
+    An automated installer that is idle is stopped at an error prompt, and on this monitor an
+    error prompt renders as static.</p>
+
+    <p>The error was in my answer file. I had selected the target disk with
+    <span class="mono">filter.NVME = "*"</span>, a filter key I had guessed at. The validator
+    accepted it because the syntax was legal. At runtime it matched no disks, and the installer
+    stopped to ask a question that could not be seen or answered. The corrected file uses literal
+    values:</p>
+
+    <pre><code>[network]
+source = "from-dhcp"
+
+[disk-setup]
+filesystem = "ext4"
+disk-list = ["nvme0n1"]</code></pre>
+
+    <div class="aside flag">
+      <span class="l">validation</span>
+      <p>The validator checks that the file is well formed, not that its values match the
+      hardware. A filter that matches nothing passes validation and fails at runtime, silently if
+      no one can see the console.</p>
+    </div>
+
+    <p>The rebuilt ISO installed in about three minutes. The web interface answered on its static
+    address at 00:49, I stopped the iVentoy DHCP server, and the router went back to being the
+    only DHCP server on the network. The machine now runs headless. Management is through the web
+    UI, so the monitor is unplugged.</p>
+
+    <h3>Notes</h3>
+
+    <ul>
+      <li>Every failure in this project was invisible on the machine being installed and explained
+      in a log on the machine serving it. The client screen was never the useful place to
+      look.</li>
+      <li>Three silent PXE failures had three different causes, wrong interface, firewall,
+      missing socket. <span class="mono">netstat -ano</span> settles which process owns a
+      port.</li>
+      <li>A stick that formats fine can still be dead, because formatting writes almost nothing.
+      A sustained 1GB write with forced flushes is a quick health check, and progress bars are
+      not evidence of progress. Disk write counters are.</li>
+      <li>The DHCP lease renewal was what identified the stalled install. The protocol traffic a
+      machine produces is diagnostic data even when the machine is otherwise silent.</li>
+      <li>Building the boot chain by hand before switching to iVentoy is why the iVentoy failures
+      were debuggable. I knew which packet was supposed to arrive next.</li>
+    </ul>
+  </article>
+</main>
+
+<script src="../assets/app.js"></script>
+</body>
+</html>
